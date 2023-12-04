@@ -47,7 +47,7 @@ pipeline {
                 dir('iac/terraform'){
                     script{
                         withCredentials([usernamePassword(credentialsId: "ClientIdClientSecret", usernameVariable: "CLIENT_ID", passwordVariable: "CLIENT_SECRET")]) {     
-                            sh "terraform plan -var $CLIENT_ID -var $CLIENT_SECRET"
+                            sh "terraform plan -var="appId=$CLIENT_ID" -var="password=$CLIENT_SECRET"
                         } 
                     }
                 }   
