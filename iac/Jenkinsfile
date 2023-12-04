@@ -46,7 +46,7 @@ pipeline {
             steps {
                 dir('iac/terraform'){
                     script{
-                        sh "terraform plan -out tf.plan -var-file='$parameters.tfvars'"
+                        sh "terraform plan -var-file='$parameters.tfvars'"
                     }
                 }   
             }        
