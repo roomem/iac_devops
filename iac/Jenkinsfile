@@ -12,7 +12,7 @@ pipeline {
         stage('Azure Login') {
             steps {
                 script {
-                    dir('terraform'){
+                    dir('iac/terraform'){
                         withCredentials([usernamePassword(credentialsId: "certimetergroup_creds", usernameVariable: "AZURE_USERNAME", passwordVariable: "AZURE_PASSWORD")]) {     
                             sh 'az login --username $AZURE_USERNAME --password $AZURE_PASSWORD'
                         } 
@@ -25,7 +25,7 @@ pipeline {
         
         stage('Terraform Init') {
             steps {
-                dir('terraform'){
+                dir('iac/terraform'){
                     //withCredentials([string(credentialsId: 'AzureStorageAccessKey', variable: 'AZURE_ACCESS_KEY')]) {
                     //        sh 'terraform init -upgrade -backend-config="access_key=${AZURE_ACCESS_KEY}"'
                     //}
@@ -37,14 +37,14 @@ pipeline {
 
         stage('Terraform Validate') {
             steps {
-                 dir('terraform'){
+                 dir('iac/terraform'){
                     sh "terraform validate"
                 }
             }
         }
         stage('Terraform Plan') {
             steps {
-                dir('terraform'){
+                dir('iac/terraform'){
                     script{
                         sh "terraform plan -out tf.plan -var-file='$parameters.tfvars'"
                     }
@@ -60,7 +60,7 @@ pipeline {
 
         stage('Terraform Apply') {
             steps {
-                dir('terraform'){
+                dir('iac/terraform'){
                         
                         sh "terraform apply -var='appId=${ARM_CLIENT_ID}' -var='password=${ARM_CLIENT_SECRET}' -auto-approve"
                 }
