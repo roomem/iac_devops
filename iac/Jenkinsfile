@@ -1,0 +1,98 @@
+pipeline {
+    agent any
+
+    environment {
+        AZURE_DEFAULT_REGION = "westeurope"
+        RG_NAME="BU-MT"
+        //AKS_NAME = "AKS_rome"
+
+    }
+
+    stages {
+        stage('Azure Login') {
+            steps {
+                script {
+                    dir('terraform'){
+                        withCredentials([usernamePassword(credentialsId: "certimetergroup_creds", usernameVariable: "AZURE_USERNAME", passwordVariable: "AZURE_PASSWORD")]) {     
+                            sh 'az login --username $AZURE_USERNAME --password $AZURE_PASSWORD'
+                        } 
+                        //sh "az login --username ${AZURE_USERNAME} --password ${AZURE_PASSWORD}"
+                    }
+                }
+            }
+        }
+
+        
+        stage('Terraform Init') {
+            steps {
+                dir('terraform'){
+                    withCredentials([string(credentialsId: 'AzureStorageAccessKey', variable: 'AZURE_ACCESS_KEY')]) {
+                            sh 'terraform init -upgrade -backend-config="access_key=${AZURE_ACCESS_KEY}"'
+                    }
+                }
+            }
+        }
+
+
+        stage('Terraform Validate') {
+            steps {
+                 dir('terraform'){
+                    sh "terraform validate"
+                }
+            }
+        }
+        stage('Terraform Plan') {
+            steps {
+                script{
+                    sh "terraform plan -out tf.plan -var-file='$parameters.tfvars'"
+                }   
+            }        
+        }
+
+        stage('Plan approval') {
+            steps {
+                input "Approvazione piano infrastruttura?"
+            }
+        }
+
+        stage('Terraform Apply') {
+            steps {
+                dir('terraform'){
+                        
+                        sh "terraform apply -var='appId=${ARM_CLIENT_ID}' -var='password=${ARM_CLIENT_SECRET}' -auto-approve"
+                }
+            }
+        }
+        
+        stage('Configurazione kubectl') {
+            steps {
+                sh 'az aks get-credentials --name $AKS_NAME --resource-group $RG_NAME'
+            }
+        }
+        stage('Verifica cluster') {
+            steps {
+                sh "kubectl cluster-info"
+            }
+        }
+        
+        stage('Piano distruzione Terraform') {
+            steps {
+                dir('terraform'){
+                    sh "terraform plan -destroy"
+                }
+            }
+        }
+        stage('Approvazione destroy Infrastruttura') {
+            steps {
+                input "Approvazione destroy infrastruttura?"
+            }
+        }
+        stage('Destroy Infrastruttura') {
+            steps {
+                dir('terraform'){
+                    sh "terraform destroy -auto-approve"
+                }
+            }
+        }
+    }
+}
