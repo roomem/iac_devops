@@ -42,12 +42,11 @@ pipeline {
                 }
             }
         }
-
         stage('Terraform Plan') {
             steps {
                 dir('iac/terraform'){
                     script{
-                        sh "terraform plan"
+                        sh "terraform plan -out tf.plan -var-file='$parameters.tfvars'"
                     }
                 }   
             }        
