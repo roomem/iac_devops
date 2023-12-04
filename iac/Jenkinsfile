@@ -80,7 +80,7 @@ pipeline {
         
         stage('Piano distruzione Terraform') {
             steps {
-                dir('terraform'){
+                dir('iac/terraform'){
                     sh "terraform plan -destroy"
                 }
             }
@@ -92,7 +92,7 @@ pipeline {
         }
         stage('Destroy Infrastruttura') {
             steps {
-                dir('terraform'){
+                dir('iac/terraform'){
                     sh "terraform destroy -auto-approve"
                 }
             }
