@@ -26,9 +26,10 @@ pipeline {
         stage('Terraform Init') {
             steps {
                 dir('terraform'){
-                    withCredentials([string(credentialsId: 'AzureStorageAccessKey', variable: 'AZURE_ACCESS_KEY')]) {
-                            sh 'terraform init -upgrade -backend-config="access_key=${AZURE_ACCESS_KEY}"'
-                    }
+                    //withCredentials([string(credentialsId: 'AzureStorageAccessKey', variable: 'AZURE_ACCESS_KEY')]) {
+                    //        sh 'terraform init -upgrade -backend-config="access_key=${AZURE_ACCESS_KEY}"'
+                    //}
+                    sh 'terraform init -upgrade'
                 }
             }
         }
