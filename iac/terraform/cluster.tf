@@ -11,7 +11,7 @@ resource "azurerm_kubernetes_cluster" "rome_aks" {
 
     default_node_pool {
         name = "${var.aks_name}nodepool"
-        vm_size = "Standard_D1_v2"
+        vm_size = "Standard_D2_v2"
         min_count = 1
         max_count = 8
         enable_auto_scaling = true
