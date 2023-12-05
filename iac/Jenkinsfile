@@ -36,11 +36,20 @@ pipeline {
 
         stage('Terraform Validate') {
             steps {
-                 dir('iac/terraform'){
+                dir('iac/terraform'){
                     sh "terraform validate"
                 }
             }
         }
+
+        stage('Terrascan'){
+            steps {
+                dir('iac/terraform'){
+                    sh 'terrascan scan -o junit-xml > terrascan.xml'
+                }
+            }
+        }
+
         stage('Terraform Plan') {
             steps {
                 dir('iac/terraform'){
@@ -87,6 +96,8 @@ pipeline {
                 sh "kubectl cluster-info"
             }
         }
+
+
         
         stage('Piano distruzione Terraform') {
             steps {
