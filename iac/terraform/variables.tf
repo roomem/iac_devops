@@ -6,6 +6,11 @@ variable "default_location" {
   type = string
 }
 
+variable "tag" {
+  type = string
+  description = "tag del progetto"
+}
+
 variable "appId" {
   type = string
   description = "Azure Application ID"
@@ -15,6 +20,7 @@ variable "password" {
   type = string
   description = "Azure application password"
 }
+
 
 variable "vnet_name" {
   description = "Nome della Virtual Network"
@@ -28,7 +34,8 @@ variable "subnet_prefixes" {
   description = "Prefissi delle subnet"
 }
 
-variable "tag" {
+variable "nsg_name" {
   type = string
-  description = "tag del progetto"
+  description = "Nome del Network Security Group"
 }
+

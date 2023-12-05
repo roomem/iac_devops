@@ -4,7 +4,7 @@ pipeline {
     environment {
         AZURE_DEFAULT_REGION = "westeurope"
         RG_NAME="BU-MT"
-        //AKS_NAME = "AKS_rome"
+        AKS_NAME = "AKS_rome"
 
     }
 
@@ -56,7 +56,7 @@ pipeline {
 
         stage('Plan approval') {
             steps {
-                input "Approvazione piano infrastruttura?"
+                input "Approve the previously generated plan?"
             }
         }
 
@@ -69,6 +69,12 @@ pipeline {
                         }
                     }
                 }
+            }
+        }
+
+        stage('Cluster deployed or not? (stop if not)') {
+            steps {
+                input "Cluster deployed or not? (stop if not)"
             }
         }
         
