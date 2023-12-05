@@ -1,4 +1,4 @@
-resource "azurerm_kubernetes_cluster" "rome_AKS" {
+resource "azurerm_kubernetes_cluster" "rome_aks" {
     name = var.aks_name
     location = data.azurerm_resource_group.BU-MT_rg.location
     resource_group_name = data.azurerm_resource_group.BU-MT_rg.name
