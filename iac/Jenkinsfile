@@ -45,7 +45,7 @@ pipeline {
         stage('Terrascan'){
             steps {
                 dir('iac/terraform'){
-                    sh 'terrascan scan -o junit-xml > terrascan.xml'
+                    sh 'terrascan scan -t azure -o junit-xml > terrascan.xml'
                 }
             }
         }
