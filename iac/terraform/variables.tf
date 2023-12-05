@@ -21,7 +21,7 @@ variable "password" {
   description = "Azure application password"
 }
 
-
+//  Vnet
 variable "vnet_name" {
   description = "Nome della Virtual Network"
 }
@@ -38,4 +38,16 @@ variable "nsg_name" {
   type = string
   description = "Nome del Network Security Group"
 }
+
+//  AKS Cluster
+variable "aks_name" {
+  type = string
+  description = "Nome AKS"
+}
+variable "dns_prefix" {
+  type = string
+  description = "Prefisso DNS usato per generare i nomi dei pod del AKS"
+}
+
+
 
