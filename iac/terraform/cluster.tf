@@ -10,7 +10,7 @@ resource "azurerm_kubernetes_cluster" "rome_aks" {
     http_application_routing_enabled = true
 
     default_node_pool {
-        name = "${var.aks_name}_nodepool"
+        name = "${var.aks_name}nodepool"
         vm_size = "Standard_D1_v2"
         min_count = 1
         max_count = 8
