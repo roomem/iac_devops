@@ -4,7 +4,7 @@ pipeline {
     environment {
         AZURE_DEFAULT_REGION = "westeurope"
         RG_NAME="BU-MT"
-        AKS_NAME = "AKS_rome"
+        AKS_NAME = "rome"
 
     }
 
@@ -16,7 +16,6 @@ pipeline {
                         withCredentials([usernamePassword(credentialsId: "certimetergroup_creds", usernameVariable: "AZURE_USERNAME", passwordVariable: "AZURE_PASSWORD")]) {     
                             sh 'az login --username $AZURE_USERNAME --password $AZURE_PASSWORD'
                         } 
-                        //sh "az login --username ${AZURE_USERNAME} --password ${AZURE_PASSWORD}"
                     }
                 }
             }
