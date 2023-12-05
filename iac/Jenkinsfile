@@ -46,6 +46,7 @@ pipeline {
             steps {
                 dir('iac/terraform'){
                     sh 'terrascan scan -t azure -o junit-xml > terrascan.xml || true'
+                    junit "terrascan.xml"
                 }
             }
         }
