@@ -63,8 +63,11 @@ pipeline {
         stage('Terraform Apply') {
             steps {
                 dir('iac/terraform'){
-                        
-                        sh "terraform apply -var='appId=${ARM_CLIENT_ID}' -var='password=${ARM_CLIENT_SECRET}' -auto-approve"
+                    script{
+                        withCredentials([usernamePassword(credentialsId: "ClientIdClientSecret", usernameVariable: "CLIENT_ID", passwordVariable: "CLIENT_SECRET")]) {
+                            sh "terraform apply -var='appId=${CLIENT_ID}' -var='password=${CLIENT_SECRET}' -auto-approve"
+                        }
+                    }
                 }
             }
         }
