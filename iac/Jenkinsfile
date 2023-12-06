@@ -42,12 +42,13 @@ pipeline {
             }
         }
 
-        stage('Terrascan'){
+        stage('Terrascan/Tfsec'){
             steps {
                 dir('iac/terraform'){
-                    sh 'terrascan scan -o junit-xml -v --find-vuln || true' 
+                    //sh 'terrascan scan -o junit-xml -v --find-vuln || true' 
                     //sh 'terrascan scan -o junit-xml -v --find-vuln > terrascan.xml || true'
                     //junit skipPublishingChecks: true, testResults: 'terrascan.xml' 
+                    sh 'tfsec'
                 }
             }
         }
