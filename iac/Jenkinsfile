@@ -25,7 +25,7 @@ pipeline {
             steps {
                 script {
                     dir('iac/terraform'){ 
-                        sh 'trivy file scan --ignore-unfixed --format=json  --recursive'
+                        sh 'trivy file scan --format=json  --recursive .'
                     }
                 }
             }
