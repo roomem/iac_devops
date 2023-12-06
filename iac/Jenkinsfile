@@ -46,7 +46,7 @@ pipeline {
             steps {
                 dir('iac/terraform'){
                     sh 'terrascan scan -o junit-xml -v --find-vuln'
-                    sh 'terrascan scan -o junit-xml -v --find-vuln > terrascan.xml || true'
+                    //sh 'terrascan scan -o junit-xml -v --find-vuln > terrascan.xml || true'
                     //junit skipPublishingChecks: true, testResults: 'terrascan.xml' 
                 }
             }
