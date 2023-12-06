@@ -22,11 +22,14 @@ pipeline {
         }
 
         stage('Trivy Secret Scanning'){
-            script {
-                dir('iac/terraform'){ 
-                    sh 'trivy file scan --ignore-unfixed --format=json  --recursive'
+            steps {
+                script {
+                    dir('iac/terraform'){ 
+                        sh 'trivy file scan --ignore-unfixed --format=json  --recursive'
+                    }
                 }
             }
+            
         }
 
         
