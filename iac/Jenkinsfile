@@ -21,6 +21,14 @@ pipeline {
             }
         }
 
+        stage('Trivy Secret Scanning'){
+            script {
+                dir('iac/terraform'){ 
+                    sh 'trivy file scan --ignore-unfixed --format=json  --recursive'
+                }
+            }
+        }
+
         
         stage('Terraform Init') {
             steps {
@@ -42,12 +50,9 @@ pipeline {
             }
         }
 
-        stage('Terrascan/Tfsec'){
+        stage('Tfsec'){
             steps {
                 dir('iac/terraform'){
-                    //sh 'terrascan scan -o junit-xml -v --find-vuln || true' 
-                    //sh 'terrascan scan -o junit-xml -v --find-vuln > terrascan.xml || true'
-                    //junit skipPublishingChecks: true, testResults: 'terrascan.xml' 
                     sh 'tfsec -s'
                 }
             }
