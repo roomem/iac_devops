@@ -25,7 +25,7 @@ pipeline {
             steps {
                 script {
                     dir('iac/terraform'){ 
-                        sh 'trivy filesystem --format .'
+                        sh 'trivy filesystem --format=json .'
                     }
                 }
             }
