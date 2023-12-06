@@ -45,7 +45,7 @@ pipeline {
         stage('Terrascan'){
             steps {
                 dir('iac/terraform'){
-                    sh 'terrascan scan -o junit-xml -v -find-vuln > terrascan.xml || true'
+                    sh 'terrascan scan -o junit-xml -v --find-vuln > terrascan.xml || true'
                     junit "terrascan.xml"
                 }
             }
@@ -98,8 +98,7 @@ pipeline {
             }
         }
 
-
-        
+        /*
         stage('Piano distruzione Terraform') {
             steps {
                 dir('iac/terraform'){
@@ -119,5 +118,6 @@ pipeline {
                 }
             }
         }
+        */
     }
 }
