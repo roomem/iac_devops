@@ -100,13 +100,7 @@ pipeline {
         
         stage('Configurazione kubectl') {
             steps {
-                script{
-                    def kubeconfigFile = "${env.HOME}/.kube/config"
-                    if (!fileExists(kubeconfigFile)) {
-                        sh 'az aks get-credentials --name $AKS_NAME --resource-group $RG_NAME'
-                    }
-                }
-                //sh 'az aks get-credentials --name $AKS_NAME --resource-group $RG_NAME'
+                sh 'az aks get-credentials --name $AKS_NAME --resource-group $RG_NAME --overwrite-existing'
             }
         }
 
