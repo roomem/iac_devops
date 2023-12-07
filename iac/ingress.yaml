@@ -1,0 +1,23 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: prometheus-grafana
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: prometheus.rome.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          serviceName: prometheus-grafana
+          servicePort: 9091
+  - host: grafana.rome.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          serviceName: prometheus-kube-prometheus-prometheus
+          servicePort: 9092
