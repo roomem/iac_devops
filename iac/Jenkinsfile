@@ -112,7 +112,7 @@ pipeline {
 
         stage('Setup Prometheus and Graphana with Helm'){ 
             steps {
-                dir(iac){
+                dir('iac'){
                     sh 'kubectl apply -f ingress.yaml'
                 }
             }
