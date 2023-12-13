@@ -10,6 +10,7 @@ pipeline{
         stage('Clone repo'){
             steps{
                 withCredentials([string(credentialsId: "PAT", variable: "PAT")]) {
+                    //
                     git clone "https://github.com/lamalicious/${PAT}@github.com/user-microservice-certificate-manager.git"
                 }
                 
