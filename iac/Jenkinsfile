@@ -109,7 +109,7 @@ pipeline {
                 sh "kubectl cluster-info"
             }
         }
-
+/*
         stage('Setup Prometheus and Graphana with Helm'){ 
             steps {
                 dir('iac'){
@@ -117,7 +117,7 @@ pipeline {
                 }
             }
         }
-
+*/
         /*
         stage('Piano distruzione Terraform') {
             steps {
