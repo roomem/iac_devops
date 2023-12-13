@@ -7,11 +7,11 @@ pipeline{
 
     stages{
 
-        stage('Clone repo'){
+        stage('Clone repository'){
             steps{
                 script{
                     withCredentials([string(credentialsId: "PAT", variable: "PAT")]) {
-                        git clone "https://github.com/lamalicious/${PAT}@github.com/user-microservice-certificate-manager.git"
+                        git branch: 'main', url: "https://github.com/lamalicious/${PAT}@github.com/user-microservice-certificate-manager.git"
                     }
                 }
                 
