@@ -39,6 +39,11 @@ variable "nsg_name" {
   description = "Nome del Network Security Group"
 }
 
+variable "acr_name" {
+  type = string
+  description = "Nome del Azure Container Registry"
+}
+
 //  AKS Cluster
 variable "aks_name" {
   type = string
