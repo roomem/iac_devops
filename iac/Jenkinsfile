@@ -2,10 +2,13 @@ pipeline {
     agent any
 
     environment {
+        // Azure Components
         AZURE_DEFAULT_REGION = "westeurope"
         RG_NAME="BU-MT"
         AKS_NAME = "rome"
 
+        // Docker Images
+        TrivyImageTag = 'aquasec/trivy:latest'
     }
 
     stages {
@@ -20,7 +23,7 @@ pipeline {
                 }
             }
         }
-
+/*
         stage('Trivy Secret Scanning'){
             steps {
                 script {
@@ -31,6 +34,31 @@ pipeline {
                 }
             }
             
+        }
+*/
+        stage('GitLeaks Secret Scanning'){
+            steps{
+                script{
+                    try{
+                        // Pull the GitLeaks image
+                        sh "docker image pull $GitLeaksImageTag"
+                        // Run GitLeaks
+                        def GitLeaksScan = sh (script: "docker run --rm -v .:/path $GitLeaksImageTag detect --source=/path --no-color --verbose", returnStatus: true)
+                        if (GitLeaksScan == 1) {
+                            echo("GitLeaks Secret Scan successfully executed, no secrets found in your code.")
+                        }
+                        else{
+                            unstable("WARNING!!! Secrets found in your code")
+                            input "Do you want the pipeline to go ahead? There are UNENCRYPTED SECRETS in your code, be aware and choose wisely."
+                        }
+                    }
+                    catch( Exception ex ){
+                        error("Secret Scanning terminated with an error : ${ex.message}")
+                    }   
+                }
+            }
+                
+
         }
 
         
