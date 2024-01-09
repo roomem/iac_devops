@@ -8,7 +8,7 @@ pipeline {
         AKS_NAME = "rome"
 
         // Docker Images
-        TrivyImageTag = 'aquasec/trivy:latest'
+        GitLeaksImageTag = 'zricethezav/gitleaks:latest'
     }
 
     stages {
