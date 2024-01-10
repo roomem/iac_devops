@@ -1,6 +1,15 @@
 pipeline {
     agent any
 
+    
+    parameters {
+        choice(
+            name: 'scanMode',
+            choices: ['dev', 'prod_no_security', 'prod'],
+            description: 'Select the Scan mode: <dev> : Will run checks without interrupting the pipeline, useful in development. <prod_no_security> : Will skip security checks in production.     <prod> : Will run full checks and stop in case of severe vulnerabilities (HIGH, CRITICAL) '
+        )
+    }
+
     environment {
         // Azure Components
         AZURE_DEFAULT_REGION = "westeurope"
@@ -40,21 +49,43 @@ pipeline {
             steps{
                 script{
                     try{
-                        // Pull the GitLeaks image
-                        sh "docker image pull $GitLeaksImageTag"
-                        // Run GitLeaks
-                        def GitLeaksScan = sh (script: "docker run --rm -v .:/path $GitLeaksImageTag detect --source=/path --no-color --verbose", returnStatus: true)
-                        if (GitLeaksScan == 1) {
-                            echo("GitLeaks Secret Scan successfully executed, no secrets found in your code.")
+                        if (params.scanMode == 'prod_no_security') {
+                            echo("No security mode detected, skipping the actual security check")
+                            return
                         }
+
+                        // Pull the GitLeaks image
+                        sh "sudo docker image pull $GitLeaksImageTag"
+
+                        //DEV MODE
+                        if(params.scanMode == 'dev') {
+                            // Run GitLeaks
+                            def GitLeaksScan = sh (script: "sudo docker run --rm -v .:/path $GitLeaksImageTag detect --source=/path --no-color --verbose", returnStatus: true)
+                            if (GitLeaksScan == 0) {
+                                echo("GitLeaks Secret Scan successfully executed, no secrets found in your code.")
+                            }
+                            else{
+                                unstable("WARNING!!! Secrets found in your code")
+                                input "Do you want the pipeline to go ahead? There are UNENCRYPTED SECRETS in your code, be aware and choose wisely."
+                            }
+                        }
+                        //PROD MODE
+                        //there is no filter in secret scanning, it's not possible to set a severity level
                         else{
-                            unstable("WARNING!!! Secrets found in your code")
-                            input "Do you want the pipeline to go ahead? There are UNENCRYPTED SECRETS in your code, be aware and choose wisely."
+                            // Run GitLeaks 
+                            def GitLeaksScan = sh (script: "sudo docker run --rm -v .:/path $GitLeaksImageTag detect --source=/path --no-color --verbose", returnStatus: true)
+                            if (GitLeaksScan == 0) {
+                                echo("GitLeaks Secret Scan successfully executed, no secrets found in your code.")
+                            }
+                            else{
+                                error("WARNING!!! Secrets found in your code")
+                                echo("Application stopped. There are UNENCRYPTED SECRETS in your code.")
+                            }
                         }
                     }
                     catch( Exception ex ){
                         error("Secret Scanning terminated with an error : ${ex.message}")
-                    }   
+                    }  
                 }
             }
                 
@@ -65,9 +96,6 @@ pipeline {
         stage('Terraform Init') {
             steps {
                 dir('iac/terraform'){
-                    //withCredentials([string(credentialsId: 'AzureStorageAccessKey', variable: 'AZURE_ACCESS_KEY')]) {
-                    //        sh 'terraform init -upgrade -backend-config="access_key=${AZURE_ACCESS_KEY}"'
-                    //}
                     sh 'terraform init -upgrade'
                 }
             }
@@ -84,8 +112,37 @@ pipeline {
 
         stage('Tfsec'){
             steps {
+                if (params.scanMode == 'prod_no_security') {
+                    echo("No security mode detected, skipping the actual security check")
+                    return
+                }
+                
                 dir('iac/terraform'){
-                    sh 'tfsec -s'
+
+                    //DEV MODE
+                    if(params.scanMode == 'dev') {
+                        // Run GitLeaks
+                        def TfsecScan = sh (script: "tfsec", returnStatus: true)
+                        if (TfsecScan == 0) {
+                            echo("Tfsec Scan successfully executed, no vulnerabilities found in your code.")
+                        }
+                        else{
+                            unstable("WARNING!!! Vulnerabilities found in your code")
+                            input "Do you want the pipeline to go ahead? There are VULNERABILITIES in your HCL TERRAFORM code, be aware and choose wisely."
+                        }
+                    }
+                    //PROD MODE
+                    else{
+                        // Run GitLeaks 
+                        def TfsecScan = sh (script: "tfsec -m HIGH", returnStatus: true)
+                        if (TfsecScan == 0) {
+                            echo("Tfsec Scan successfully executed, no secrets found in your code.")
+                        }
+                        else{
+                            error("WARNING!!! Vulnerabilities found in your code")
+                            echo("Application stopped. There are VULNERABILITIES in your HCL TERRAFORM code.")
+                        }
+                    }
                 }
             }
         }
