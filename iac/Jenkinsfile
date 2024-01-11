@@ -14,7 +14,7 @@ pipeline {
         // Azure Components
         AZURE_DEFAULT_REGION = "westeurope"
         RG_NAME="BU-MT"
-        AKS_NAME = "rome"
+        AKS_NAME = "rom1"
 
         // Docker Images
         GitLeaksImageTag = 'zricethezav/gitleaks:latest'
