@@ -128,7 +128,7 @@ pipeline {
                             if(params.scanMode == 'dev') {
                                 // Run Tfsec
                                 //def TfsecScan = sh (script: "tfsec", returnStatus: true)
-                                def TfsecScan = sh (script: "docker run --rm -it -v .:/path $TfsecImageTag .", returnStatus: true)
+                                def TfsecScan = sh (script: "docker run --rm -it -tty -v .:/path $TfsecImageTag .", returnStatus: true)
                                 if (TfsecScan == 0) {
                                     echo("Tfsec Scan successfully executed, no vulnerabilities found in your code.")
                                 }
@@ -137,7 +137,6 @@ pipeline {
                                     input "Do you want the pipeline to go ahead? There are VULNERABILITIES in your HCL TERRAFORM code, be aware and choose wisely."
                                 }
                             }
-                            
                             //PROD MODE
                             else{
                                 // Run GitLeaks 
