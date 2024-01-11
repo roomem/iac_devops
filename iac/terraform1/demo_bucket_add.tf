@@ -1,5 +1,5 @@
 resource "azurerm_storage_account" "example" {
-  name = "storage"
+  name = "rome_stg"
   location = var.default_location
   resource_group_name = var.resource_group_name
 
@@ -8,7 +8,7 @@ resource "azurerm_storage_account" "example" {
 }
 
 resource "azurerm_storage_container" "example" {
-  name = "bucket"
+  name = "rome_bkt"
   storage_account_name = azurerm_storage_account.example.name
 
   container_access_type = "private"
