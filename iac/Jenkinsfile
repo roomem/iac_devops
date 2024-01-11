@@ -18,6 +18,7 @@ pipeline {
 
         // Docker Images
         GitLeaksImageTag = 'zricethezav/gitleaks:latest'
+        TfsecImageTag = 'aquasec/tfsec:latest'
     }
 
     stages {
@@ -119,11 +120,15 @@ pipeline {
                             return
                         }
                         
+                        // Pull the Tfsec image
+                        sh "sudo docker image pull $TfsecImageTag"
+
                         dir('iac/terraform1'){
                             //DEV MODE
                             if(params.scanMode == 'dev') {
-                                // Run GitLeaks
-                                def TfsecScan = sh (script: "tfsec", returnStatus: true)
+                                // Run Tfsec
+                                //def TfsecScan = sh (script: "tfsec", returnStatus: true)
+                                def TfsecScan = sh (script: "docker run --rm -it -v .:/path $TfsecImageTag .", returnStatus: true)
                                 if (TfsecScan == 0) {
                                     echo("Tfsec Scan successfully executed, no vulnerabilities found in your code.")
                                 }
