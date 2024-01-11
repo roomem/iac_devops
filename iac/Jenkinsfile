@@ -137,6 +137,7 @@ pipeline {
                                     input "Do you want the pipeline to go ahead? There are VULNERABILITIES in your HCL TERRAFORM code, be aware and choose wisely."
                                 }
                             }
+                            
                             //PROD MODE
                             else{
                                 // Run GitLeaks 
