@@ -172,12 +172,15 @@ pipeline {
 
         stage('Plan approval') {
             steps {
-                if(params.scanMode == 'dev'){
+                script{
+                    if(params.scanMode == 'dev'){
                     input "Approve the previously generated plan?"
+                    }
+                    else{
+                        echo(" No need to approve in prod mode, for automation reasons")
+                    }
                 }
-                else{
-                    echo(" No need to approve in prod mode, for automation reasons")
-                }
+                
             }
         }
 
