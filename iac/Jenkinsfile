@@ -184,11 +184,6 @@ pipeline {
             }
         }
 
-        stage('Cluster deployed or not? (stop if not)') {
-            steps {
-                input "Cluster deployed or not? (stop if not)"
-            }
-        }
         
         stage('Configurazione kubectl') {
             steps {
