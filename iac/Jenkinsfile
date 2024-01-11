@@ -128,7 +128,7 @@ pipeline {
                             if(params.scanMode == 'dev') {
                                 // Run Tfsec
                                 //def TfsecScan = sh (script: "tfsec", returnStatus: true)
-                                def TfsecScan = sh (script: "docker run --rm --it --tty -v .:/path $TfsecImageTag .", returnStatus: true)
+                                def TfsecScan = sh (script: "docker run --rm --tty -v .:/path $TfsecImageTag .", returnStatus: true)
                                 if (TfsecScan == 0) {
                                     echo("Tfsec Scan successfully executed, no vulnerabilities found in your code.")
                                 }
