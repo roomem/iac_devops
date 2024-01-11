@@ -5,7 +5,7 @@ pipeline {
     parameters {
         choice(
             name: 'scanMode',
-            choices: ['dev', 'prod_no_security', 'prod'],
+            choices: ['prod', 'prod_no_security', 'dev'],
             description: 'Select the Scan mode: <dev> : Will run checks without interrupting the pipeline, useful in development. <prod_no_security> : Will skip security checks in production.     <prod> : Will run full checks and stop in case of severe vulnerabilities (HIGH, CRITICAL) '
         )
     }
@@ -127,7 +127,6 @@ pipeline {
                             //DEV MODE
                             if(params.scanMode == 'dev') {
                                 // Run Tfsec
-                                //def TfsecScan = sh (script: "tfsec", returnStatus: true)
                                 def TfsecScan = sh (script: "sudo docker run --rm --tty -v .:/path $TfsecImageTag .", returnStatus: true)
                                 if (TfsecScan == 0) {
                                     echo("Tfsec Scan successfully executed, no vulnerabilities found in your code.")
@@ -139,8 +138,8 @@ pipeline {
                             }
                             //PROD MODE
                             else{
-                                // Run GitLeaks 
-                                def TfsecScan = sh (script: "tfsec -m HIGH", returnStatus: true)
+                                // Run Tfsec 
+                                def TfsecScan = sh (script: "sudo docker run --rm --tty -v -m HIGH .:/path $TfsecImageTag .", returnStatus: true)
                                 if (TfsecScan == 0) {
                                     echo("Tfsec Scan successfully executed, no secrets found in your code.")
                                 }
@@ -173,7 +172,12 @@ pipeline {
 
         stage('Plan approval') {
             steps {
-                input "Approve the previously generated plan?"
+                if(params.scanMode == 'dev'){
+                    input "Approve the previously generated plan?"
+                }
+                else{
+                    echo(" No need to approve in prod mode, for automation reasons")
+                }
             }
         }
 
