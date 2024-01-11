@@ -139,7 +139,7 @@ pipeline {
                             //PROD MODE
                             else{
                                 // Run Tfsec 
-                                def TfsecScan = sh (script: "sudo docker run --rm --tty -v -m HIGH .:/path $TfsecImageTag .", returnStatus: true)
+                                def TfsecScan = sh (script: "sudo docker run --rm --tty -v .:/path $TfsecImageTag .  -m HIGH", returnStatus: true)
                                 if (TfsecScan == 0) {
                                     echo("Tfsec Scan successfully executed, no secrets found in your code.")
                                 }
