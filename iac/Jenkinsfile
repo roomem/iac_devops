@@ -208,15 +208,42 @@ pipeline {
                 sh "kubectl cluster-info"
             }
         }
-/*
-        stage('Setup Prometheus and Graphana with Helm'){ 
+
+        stage('Monitoring') {
             steps {
-                dir('iac'){
-                    sh 'kubectl apply -f ingress.yaml'
-                }
+                script{
+                    sh 'az aks get-credentials --name $AKS_NAME --resource-group $RG_NAME --overwrite-existing'
+                    sh 'kubectl --kubeconfig /var/lib/jenkins/.kube/config cluster-info'
+                    
+                    dir('iac/kube-state-metrics') {
+                        sh 'kubectl apply -f .'
+                    }
+                    
+                    dir('iac/prometheus') {
+                        sh 'kubectl create namespace monitoring || true'
+                        sh 'kubectl apply -f .'
+                    }
+
+                    dir('iac/dashboard') {
+                        sh 'kubectl apply -f .'
+                        sh 'kubectl create serviceaccount dashboard -n kubernetes-dashboard || true'
+                        sh 'kubectl create clusterrolebinding dashboard-admin -n kubernetes-dashboard --clusterrole=cluster-admin --serviceaccount=kubernetes-dashboard:dashboard || true'
+                        
+                        script {
+                            def tokendashboard = sh(returnStdout: true, script: "kubectl -n kubernetes-dashboard create token dashboard")
+                            echo "K8s dashboard access token: ${tokendashboard}"
+                        }
+                    }
+                    sh 'kubectl create deployment grafana --image=docker.io/grafana/grafana:latest -n monitoring || true'
+                    sh 'kubectl expose deployment grafana --type LoadBalancer --port 3000 -n monitoring || true'
+                    
+                    script {
+                        def grafana_url = sh(returnStdout: true, script: "kubectl get service grafana -n monitoring --output=jsonpath='{.status.loadBalancer.ingress[0].hostname}'")
+                        echo "Grafana accessibile da ${grafana_url}:3000"
+                    }
+                }      
             }
         }
-*/
         /*
         stage('Piano distruzione Terraform') {
             steps {
